@@ -552,7 +552,7 @@ mod blocking_io {
     }
 
     #[test]
-    fn fetch_and_checkout_into_non_empty_directory_is_allowed_by_default() -> crate::Result {
+    fn fetch_and_checkout_into_non_empty_directory() -> crate::Result {
         let tmp = gix_testtools::tempfile::TempDir::new()?;
         let existing_path = tmp.path().join("existing.txt");
         let existing_content = b"I was here before you";
@@ -562,7 +562,10 @@ mod blocking_io {
             remote::repo("base").path(),
             tmp.path(),
             gix::create::Kind::WithWorktree,
-            Default::default(),
+            gix::create::Options {
+                destination_must_be_empty: false,
+                ..Default::default()
+            },
             restricted(),
         )?;
         let (mut checkout, _out) =
@@ -835,10 +838,7 @@ fn clone_with_worktree_and_destination_must_be_empty() -> crate::Result {
         remote::repo("base").path(),
         tmp.path(),
         gix::create::Kind::WithWorktree,
-        gix::create::Options {
-            destination_must_be_empty: true,
-            ..Default::default()
-        },
+        Default::default(),
         restricted(),
     ) {
         Ok(_) => unreachable!("this should fail as the directory isn't empty"),
