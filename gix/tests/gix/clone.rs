@@ -563,7 +563,7 @@ mod blocking_io {
             tmp.path(),
             gix::create::Kind::WithWorktree,
             gix::create::Options {
-                destination_must_be_empty: false,
+                destination_must_be_empty: Some(false),
                 ..Default::default()
             },
             restricted(),

@@ -54,10 +54,7 @@ pub fn init(directory: Option<PathBuf>) -> Result<gix::discover::repository::Pat
     gix::create::into(
         directory.unwrap_or_default(),
         gix::create::Kind::WithWorktree,
-        gix::create::Options {
-            destination_must_be_empty: false,
-            ..Default::default()
-        },
+        gix::create::Options::default(),
     )
     .with_context(|| "Repository initialization failed")
 }

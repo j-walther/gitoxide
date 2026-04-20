@@ -108,24 +108,15 @@ fn create_dir(p: &Path) -> Result<(), Error> {
 }
 
 /// Options for use in [`into()`];
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct Options {
     /// If true, and the kind of repository to create has a worktree, then the destination directory must be empty.
     ///
     /// By default repos with worktree can be initialized into a non-empty repository as long as there is no `.git` directory.
-    pub destination_must_be_empty: bool,
+    pub destination_must_be_empty: Option<bool>,
     /// If set, use these filesystem capabilities to populate the respective git-config fields.
     /// If `None`, the directory will be probed.
     pub fs_capabilities: Option<gix_fs::Capabilities>,
-}
-
-impl Default for Options {
-    fn default() -> Self {
-        Options {
-            destination_must_be_empty: true,
-            fs_capabilities: None,
-        }
-    }
 }
 
 /// Create a new `.git` repository of `kind` within the possibly non-existing `directory`
@@ -144,7 +135,7 @@ pub fn into(
     let mut dot_git = directory.into();
     let bare = matches!(kind, Kind::Bare);
 
-    if bare || destination_must_be_empty {
+    if bare || destination_must_be_empty.unwrap_or_default() {
         let num_entries_in_dot_git = fs::read_dir(&dot_git)
             .or_else(|err| {
                 if err.kind() == std::io::ErrorKind::NotFound {
