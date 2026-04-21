@@ -135,7 +135,7 @@ pub fn into(
     let mut dot_git = directory.into();
     let bare = matches!(kind, Kind::Bare);
 
-    if bare || destination_must_be_empty.unwrap_or_default() {
+    if bare || destination_must_be_empty.unwrap_or(false) {
         let num_entries_in_dot_git = fs::read_dir(&dot_git)
             .or_else(|err| {
                 if err.kind() == std::io::ErrorKind::NotFound {
